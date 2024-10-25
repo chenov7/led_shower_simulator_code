@@ -59,33 +59,33 @@ void SPItestMenu::send_trigger()
 }
 
 void SPItestMenu::set_rc_value(bool draw) 
-{ 
+{
     rc_to_value_string(menu_items_[MIP_ROWCOL].value, ar_, ac_);
     if(draw)draw_item_value(MIP_ROWCOL);
 }
 
 void SPItestMenu::set_delay_value(bool draw)
-{ 
+{
     menu_items_[MIP_DELAY].value = std::to_string(delay_); 
     if(draw)draw_item_value(MIP_DELAY);
 }
 
 void SPItestMenu::set_enable_value(bool draw) 
-{ 
+{
     menu_items_[MIP_ENABLE].value = enable_ ? ">ENABLE<" : "disable"; 
     menu_items_[MIP_ENABLE].value_style = enable_ ? ANSI_INVERT : "";
     if(draw)draw_item_value(MIP_ENABLE);
 }
 
 void SPItestMenu::set_trigger_value(bool draw) 
-{ 
+{
     menu_items_[MIP_TRIGGER].value = trigger_ ? ">ON<" : "off";
     menu_items_[MIP_TRIGGER].value_style = trigger_ ? ANSI_INVERT : ""; 
     if(draw)draw_item_value(MIP_TRIGGER);
 }
 
 void SPItestMenu::set_enable_auto_trigger_value(bool draw) 
-{ 
+{
     menu_items_[MIP_AUTO_TRIGGER].value = enable_auto_trigger_ ? ">ENABLE<" : "disable"; 
     menu_items_[MIP_AUTO_TRIGGER].value_style = enable_auto_trigger_ ? ANSI_INVERT : "";
     if(draw)draw_item_value(MIP_AUTO_TRIGGER);
