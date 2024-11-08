@@ -257,6 +257,37 @@ bool Menu::process_rc_keys(int& ar, int& ac, int key, int key_count)
     return false;
 }
 
+bool Menu::hjkl_rc_keys(int& ar2, int& ac2, int key, int key_count)
+{
+    switch(key) {
+    case 'k':
+        decrease_value_in_range(ar2, 0, 1, key_count==1);
+        return true;
+    case 'j':
+        increase_value_in_range(ar2, 15, 1, key_count==1);
+        return true;
+    case 'h':
+        Menu::decrease_value_in_range(ac2, 0, 1, key_count==1);
+        return true;
+    case 'l':
+        increase_value_in_range(ac2, 15, 1, key_count==1);
+        return true;
+    case 'K':
+        ar2 = 0;
+        return true;
+    case 'J':
+        ar2 = 15;
+        return true;
+    case 'H':
+        ac2 = 0;
+        return true;
+    case 'L':
+        ac2 = 15;
+        return true;
+    }
+    return false;
+}
+
 void Menu::rc_to_value_string(std::string& value, int ar, int ac)
 {
     value = std::string(1, char('A' + ar)) + std::to_string(ac); 
