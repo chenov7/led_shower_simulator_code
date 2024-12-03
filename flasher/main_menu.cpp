@@ -5,6 +5,7 @@
 #include "engineering_menu.hpp"
 #include "dc_ramp_menu.hpp"
 #include "spi_test_menu.hpp"
+#include "ledtest_menu.hpp"
 
 namespace {
     static BuildDate build_date(__DATE__,__TIME__);
@@ -23,6 +24,7 @@ std::vector<SimpleItemValueMenu::MenuItem> MainMenu::make_menu_items() {
     menu_items.at(MIP_REBOOT)      = {"Ctrl-b  : Reboot flasher (press and hold)", 0, ""};
     menu_items.at(MIP_DC_RAMP)     = {"r       : Ramp menu", 0, ""};
     menu_items.at(MIP_SPI_TEST)    = {"s       : SPI test menu", 0, ""};
+    menu_items.at(MIP_LED_TEST)    = {"2       : Two-LED Delayed Trigger menu", 0, ""}; //pos: 5 but non existant before mod
     return menu_items;
 }
 
@@ -61,6 +63,13 @@ bool MainMenu::process_key_press(int key, int key_count, int& return_code,
     case 's': 
         {
             SPItestMenu menu;
+            menu.event_loop();
+            this->redraw();
+        }
+        break;
+    case '2':
+        {
+            LEDtestMenu menu;
             menu.event_loop();
             this->redraw();
         }
