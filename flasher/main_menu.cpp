@@ -24,7 +24,7 @@ std::vector<SimpleItemValueMenu::MenuItem> MainMenu::make_menu_items() {
     menu_items.at(MIP_REBOOT)      = {"Ctrl-b  : Reboot flasher (press and hold)", 0, ""};
     menu_items.at(MIP_DC_RAMP)     = {"r       : Ramp menu", 0, ""};
     menu_items.at(MIP_SPI_TEST)    = {"s       : SPI test menu", 0, ""};
-    menu_items.at(MIP_LED_TEST)    = {"2       : Two-LED Delayed Trigger menu", 0, ""}; //pos: 5 but non existant before mod
+    menu_items.at(MIP_LED_TEST)    = {"2       : Two-LED Delayed Trigger menu", 0, ""};
     return menu_items;
 }
 
