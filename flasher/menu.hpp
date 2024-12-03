@@ -93,6 +93,7 @@ public:
     }
 
     static bool process_rc_keys(int& ar, int& ac, int key, int key_count);
+    static bool hjkl_rc_keys(int& ar2, int& ac2, int key, int key_count);
     static void rc_to_value_string(std::string& value, int ar, int ac);
 
     static const int FAILED_ESCAPE_SEQUENCE      = 997;
