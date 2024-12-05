@@ -7,11 +7,61 @@ namespace {
     static BuildDate build_date(__DATE__,__TIME__);
 }
 
-LEDtestMenu::LEDtestMenu() : 
+LEDtestMenu::LEDtestMenu() :
     SimpleItemValueMenu(make_menu_items(), "Two-LED Delayed Trigger Menu")
 {
     sync_values();
     sync_values2();
+}
+
+void LEDtestMenu::delay()
+{
+    sleep_us(1);
+}
+
+void LEDtestMenu::enable_flashes()
+{
+    gpio_put(DAC_EN_PIN, 0);
+    gpio_put(DAC_WR_PIN, 0);
+    delay();
+
+    gpio_put_masked(0x000003 << DAC_SEL_BASE_PIN, 1 << DAC_SEL_BASE_PIN);
+    gpio_put_masked(0x0000FF << VDAC_BASE_PIN, vdac_ << VDAC_BASE_PIN);
+    delay();
+    gpio_put(DAC_WR_PIN, 1);
+    delay();
+    gpio_put(DAC_WR_PIN, 0);
+    delay();
+
+    gpio_put_masked(0x000003 << DAC_SEL_BASE_PIN, 3 << DAC_SEL_BASE_PIN);
+    gpio_put_masked(0x0000FF << VDAC_BASE_PIN, vdac_2 << VDAC_BASE_PIN);
+    delay();
+    gpio_put(DAC_WR_PIN, 1);
+    delay();
+    gpio_put(DAC_WR_PIN, 0);
+    delay();
+
+    gpio_put_masked(0x000003 << DAC_SEL_BASE_PIN, 0 << DAC_SEL_BASE_PIN);
+    gpio_put_masked(0x0000FF << VDAC_BASE_PIN, 0 << VDAC_BASE_PIN);
+    delay();
+    gpio_put_masked(0x00000F << ROW_A_BASE_PIN, ar_ << ROW_A_BASE_PIN);
+    gpio_put_masked(0x00000F << COL_A_BASE_PIN, ac_ << COL_A_BASE_PIN);
+    delay();
+    gpio_put(DAC_EN_PIN, 1);
+    gpio_put(DAC_WR_PIN, 1);
+    gpio_put(TRIG_PIN, 1);
+}
+
+void LEDtestMenu::disable_flashes()
+{
+    gpio_put(DAC_EN_PIN, 0);
+    gpio_put(DAC_WR_PIN, 0);
+    delay();
+    gpio_put_masked(0x0000FF << VDAC_BASE_PIN, 0 << VDAC_BASE_PIN);
+    gpio_put_masked(0x00000F << ROW_A_BASE_PIN, 0 << ROW_A_BASE_PIN);
+    gpio_put_masked(0x00000F << COL_A_BASE_PIN, 0 << COL_A_BASE_PIN);
+    delay();
+    gpio_put(TRIG_PIN, 0);
 }
 
 void LEDtestMenu::sync_values()
@@ -32,48 +82,48 @@ void LEDtestMenu::sync_values2()
 
 void LEDtestMenu::set_enable_disable_value(bool draw)
 {
-    menu_items_[MIP_FED].value = enable_disable_ ? ">ENABLE<" : "disable"; 
+    menu_items_[MIP_FED].value = enable_disable_ ? ">ENABLE<" : "disable";
     menu_items_[MIP_FED].value_style = enable_disable_ ? ANSI_INVERT : "";
     if(draw)draw_item_value(MIP_FED);
 }
 
-void LEDtestMenu::set_frequency_value(bool draw) 
-{ 
-    menu_items_[MIP_FREQUENCY].value = std::to_string(frequency_); 
+void LEDtestMenu::set_frequency_value(bool draw)
+{
+    menu_items_[MIP_FREQUENCY].value = std::to_string(frequency_);
     if(draw)draw_item_value(MIP_FREQUENCY);
 }
 
-void LEDtestMenu::set_delay_value(bool draw) 
-{ 
-    menu_items_[MIP_DELAY].value = std::to_string(delay_); 
+void LEDtestMenu::set_delay_value(bool draw)
+{
+    menu_items_[MIP_DELAY].value = std::to_string(delay_);
     if(draw)draw_item_value(MIP_DELAY);
 }
 
-void LEDtestMenu::set_brightness_secled_value(bool draw) 
-{ 
-    menu_items_[MIP_LEDTWO_BRIGHTNESS].value = std::to_string(vdac_2); 
+void LEDtestMenu::set_brightness_secled_value(bool draw)
+{
+    menu_items_[MIP_LEDTWO_BRIGHTNESS].value = std::to_string(vdac_2);
     if(draw)draw_item_value(MIP_LEDTWO_BRIGHTNESS);
 }
 
-void LEDtestMenu::set_brightness_firstled_value(bool draw) 
-{ 
-    menu_items_[MIP_LEDONE_BRIGHTNESS].value = std::to_string(vdac_); 
+void LEDtestMenu::set_brightness_firstled_value(bool draw)
+{
+    menu_items_[MIP_LEDONE_BRIGHTNESS].value = std::to_string(vdac_);
     if(draw)draw_item_value(MIP_LEDONE_BRIGHTNESS);
 }
 
-void LEDtestMenu::setsecled_rc_value(bool draw) 
+void LEDtestMenu::setsecled_rc_value(bool draw)
 {
     rc_to_value_string(menu_items_[MIP_LEDTWO_ROWCOL].value, ar_2, ac_2);
     if(draw)draw_item_value(MIP_LEDTWO_ROWCOL);
 }
 
-void LEDtestMenu::setfirstled_rc_value(bool draw) 
+void LEDtestMenu::setfirstled_rc_value(bool draw)
 {
     rc_to_value_string(menu_items_[MIP_LEDONE_ROWCOL].value, ar_, ac_);
     if(draw)draw_item_value(MIP_LEDONE_ROWCOL);
 }
 
-std::vector<SimpleItemValueMenu::MenuItem> LEDtestMenu::make_menu_items() 
+std::vector<SimpleItemValueMenu::MenuItem> LEDtestMenu::make_menu_items()
 {
     std::vector<SimpleItemValueMenu::MenuItem> menu_items(MIP_NUM_ITEMS);
     menu_items.at(MIP_LEDONE_ROWCOL) = {"Cursors    : Change column & row LED1", 3, "A0"};
@@ -177,6 +227,11 @@ bool LEDtestMenu::process_key_press(int key, int key_count, int& return_code,
         case 'E':
             enable_disable_ = !enable_disable_;
             set_enable_disable_value(true);
+            if (enable_disable_) {
+                enable_flashes();
+            } else {
+                disable_flashes();
+            }
             break;
         case 'q':
         case 'Q':
