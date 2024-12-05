@@ -40,6 +40,10 @@ private:
     void set_delay_value(bool draw = true);
     void set_enable_disable_value(bool draw);
 
+    void enable_flashes();
+    void disable_flashes();
+    void delay();
+
     int vdac_ = 0; //vdac_ for first led
     int vdac_2 = 0; //vdac_2 for second led
     int ac_ = 0; //ac_ for first led
